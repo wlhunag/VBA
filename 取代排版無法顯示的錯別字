@@ -1,0 +1,24 @@
+Sub CommonTypeErrors()
+'
+' CommonError 巨集
+' List 裡面有排版無法顯示的錯別字
+'
+   Dim i As Long
+   Dim WrongWordList  As Variant
+   Dim CorrectWordList  As Variant
+   Dim j As Variant
+    i = 0
+    WrongWordList = Array(ChrW(29234), ChrW(40637), ChrW(30528), ChrW(32675), ChrW(23491), ChrW(23791), ChrW(33747), ChrW(21647), ChrW(30494), ChrW(24625), ChrW(20915), ChrW(37805), ChrW(20749), ChrW(40175), ChrW(25591), ChrW(24892), ChrW(27809), ChrW(21843), ChrW(27738), ChrW(28152), ChrW(21668), ChrW(26083), ChrW(35500), ChrW(34886), ChrW(21364), ChrW(25243), ChrW(20869), ChrW(33304), ChrW(25933), ChrW(32892), ChrW(37444), ChrW(38322), ChrW(38996), ChrW(25825), ChrW(32171), ChrW(39393), ChrW(37390), ChrW(20950), ChrW(37921), ChrW(36529), ChrW(33050), ChrW(29987), ChrW(37111), ChrW(21035), ChrW(27521), ChrW(23680), ChrW(38544), ChrW(20914), ChrW(21373), ChrW(25243), ChrW(27114), ChrW(21003), ChrW(21584), ChrW(25658), ChrW(30577), ChrW(28662), ChrW(21364), ChrW(22815), ChrW(20702), ChrW(24378), ChrW(20917), ChrW(33050), ChrW(20915))
+    CorrectWordList = Array(ChrW(28858), ChrW(40636), ChrW(33879), ChrW(32676), ChrW(20900), ChrW(23792), ChrW(26524), ChrW(35424), ChrW(30495), ChrW(21254), ChrW(27770), ChrW(37806), ChrW(20667), ChrW(40179), ChrW(25554), ChrW(24910), ChrW(27794), ChrW(21855), ChrW(27745), ChrW(28165), ChrW(21522), ChrW(26082), ChrW(35498), ChrW(30526), ChrW(21371), ChrW(25291), ChrW(20839), ChrW(39208), ChrW(25944), ChrW(32893), ChrW(37941), ChrW(38321), ChrW(38991), ChrW(25260), ChrW(32218), ChrW(32629), ChrW(37476), ChrW(28310), ChrW(37941), ChrW(36530), ChrW(33139), ChrW(29986), ChrW(37129), ChrW(21029), ChrW(27519), ChrW(20986), ChrW(38577), ChrW(27798), ChrW(21363), ChrW(25291), ChrW(27010), ChrW(21002), ChrW(21558), ChrW(25884), ChrW(26247), ChrW(38346), ChrW(21371), ChrW(22816), ChrW(20605), ChrW(24375), ChrW(27841), ChrW(33139), ChrW(27770))
+   For Each j In WrongWordList
+    Selection.Find.ClearFormatting
+    With Selection.Find
+        .Text = WrongWordList(i)
+        .Replacement.Text = CorrectWordList(i)
+        .Forward = True
+        .Wrap = wdFindContinue
+    End With
+        Selection.Find.Execute Replace:=wdReplaceAll
+        i = i + 1
+        Next
+End Sub
