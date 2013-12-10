@@ -1,0 +1,23 @@
+
+Sub typeanswersheet()
+Dim i As Integer
+Dim answer As String
+answer = "(A) " & vbCrLf & "(B) " & vbCrLf & "(C) " & vbCrLf & "(D) " & vbCrLf & vbCrLf & "<Ans>:()"
+  Application.ScreenUpdating = False
+For i = 1 To 40
+Selection.TypeText Text:=i & "."
+    Selection.TypeParagraph
+     Selection.TypeText Text:=answer
+     Selection.TypeParagraph
+     Selection.TypeParagraph
+Next i
+  Application.ScreenUpdating = True
+End Sub
+Sub 自動編號()
+'去掉word 的自動編號，留下純文字
+Dim kgslist As List
+For Each kgslist In ActiveDocument.Lists
+kgslist.ConvertNumbersToText
+Next
+
+End Sub
