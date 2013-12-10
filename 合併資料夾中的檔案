@@ -1,0 +1,19 @@
+Sub InsertFiles()
+    Dim strFileName As String
+    Dim rng As Range
+    Dim Doc As Document
+    
+    '請設定資料夾
+    Const strPath = "D:\文件\學校教材\大三\OD\學長姊共筆參考"
+    Set Doc = Documents.Add
+    strFileName = Dir$(strPath & "\*.doc*")
+    Do
+        Set rng = Doc.Bookmarks("\EndOfDoc").Range
+        If rng.End > 0 Then 'section break not necessary before first document.'
+            rng.InsertBreak wdSectionBreakNextPage
+            rng.Collapse wdCollapseEnd
+        End If
+        rng.InsertFile strPath & "\" & strFileName
+        strFileName = Dir$()
+    Loop Until strFileName = ""
+End Sub
