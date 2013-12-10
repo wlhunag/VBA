@@ -1,0 +1,139 @@
+Sub ACOPYTranslationOmegaT()
+'
+' COPYTranslation from OmegaT巨集
+'若使用OmegaT 翻譯 plain word 文件，可以在翻完以後使用此巨集
+'
+Dim i As Integer
+'整個VBA裡面只有這兩行需要每次手動改。
+Const fileFromOmegaT = "10784-C00-Index_265_Chinese.idz-wlhunag-ZH-TW.docx"
+Const fileToBePasted = "10784-C00-Index_265_Chinese.idz.doc"
+
+'先把用omegaT 翻譯完的docx 檔案裡面的手動分行符號改成 ^p
+Documents(fileFromOmegaT).Activate
+    Selection.Find.ClearFormatting
+    Selection.Find.Replacement.ClearFormatting
+    With Selection.Find
+        .Text = "^l"
+        .Replacement.Text = "^p"
+        .Forward = True
+        .Wrap = wdFindContinue
+        .MatchByte = True
+
+    End With
+    Selection.Find.Execute Replace:=wdReplaceAll
+    '切換到翻譯部給的的文件，取代target 後面的手動分行符號
+     Documents(fileToBePasted).Activate
+    With Selection.Find
+        .Text = "<TARGET>^l"
+        .Replacement.Text = "<TARGET>^p"
+        .Forward = True
+        .Wrap = wdFindContinue
+        .MatchByte = True
+
+    End With
+    Selection.Find.Execute Replace:=wdReplaceAll
+    
+'關掉螢幕更新，以加快處理速度
+    Application.ScreenUpdating = False
+    '根據<TARGET> 數量多少，而設定以下的數值
+    Dim iCount As Integer
+            iCount = 0
+            With Selection
+                .HomeKey Unit:=wdStory
+                With .Find
+                    .ClearFormatting
+                    .Text = "<TARGET>"
+                    ' Loop until Word can no longer
+                    ' find the search string and
+                    ' count each instance
+                    Do While .Execute
+                        iCount = iCount + 1
+                        Selection.MoveRight
+                    Loop
+                End With
+                ' show the number of occurences
+              '  MsgBox " appears " & iCount & " times"
+            End With
+'搜尋完了，回到文件最開頭
+Documents(fileFromOmegaT).Activate
+With Selection
+    .HomeKey Unit:=wdStory
+End With
+'進行第一個翻譯<TARGET>的複製
+With Selection.Find
+        .Text = "<TARGET>"
+        .Forward = True
+        .Wrap = wdFindContinue
+        .MatchByte = True
+    End With
+    Selection.Find.Execute
+    Selection.MoveUp Unit:=wdLine, Count:=1
+    '複製<TARGET>上方的段落，也就是從OmegaT 翻譯好的中文
+    Selection.GoTo What:=wdGoToBookmark, Name:="\para"
+    Selection.Copy
+    '換到要貼上的文件
+    Documents(fileToBePasted).Activate
+    
+    With Selection.Find
+        .Text = "<TARGET>"
+        .Forward = True
+        .Wrap = wdFindContinue
+        .MatchByte = True
+    End With
+    Selection.Find.Execute
+  '貼到<TARGET>下面
+    Selection.MoveDown Unit:=wdLine, Count:=1
+Selection.GoTo What:=wdGoToBookmark, Name:="\para"
+   Selection.Paste
+'再次回到omegaT翻譯文件的開頭
+Documents(fileFromOmegaT).Activate
+With Selection
+    .HomeKey Unit:=wdStory
+End With
+'進行剩餘次數的貼上
+    For i = 1 To iCount - 1
+Documents(fileFromOmegaT).Activate
+    With Selection.Find
+        .Text = "<TARGET>"
+        .Forward = True
+        .Wrap = wdFindContinue
+        .MatchByte = True
+    End With
+    Selection.Find.Execute
+    Selection.Find.Execute
+    Selection.MoveUp Unit:=wdLine, Count:=1
+    '複製<TARGET>上方的段落，也就是從OmegaT 翻譯好的中文
+    Selection.GoTo What:=wdGoToBookmark, Name:="\para"
+    Selection.Copy
+    '換到要貼上的文件
+    Documents(fileToBePasted).Activate
+    
+    With Selection.Find
+        .Text = "<TARGET>"
+        .Forward = True
+        .Wrap = wdFindContinue
+        .MatchByte = True
+    End With
+    Selection.Find.Execute
+  '貼到<TARGET>下面
+    Selection.MoveDown Unit:=wdLine, Count:=1
+Selection.GoTo What:=wdGoToBookmark, Name:="\para"
+   Selection.Paste
+   
+        Next i
+        
+Application.ScreenUpdating = True
+
+'將fileToBePasted的段落標記改成手動分行符號
+Selection.Find.ClearFormatting
+Selection.Find.Replacement.ClearFormatting
+    With Selection.Find
+        .Text = "<TARGET>^p"
+        .Replacement.Text = "<TARGET>^l"
+        .Forward = True
+        .Wrap = wdFindContinue
+        .MatchByte = True
+
+    End With
+    Selection.Find.Execute Replace:=wdReplaceAll
+End Sub
