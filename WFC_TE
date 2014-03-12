@@ -37,7 +37,6 @@ End:=ActiveDocument.Paragraphs(i).Range.End).Select
         With Selection.Font
            .NameAscii = "BabyBabel"
            .NameOther = "BabyBabel"
-           .NameFarEast = "新細明體"
            
            .Size = 12
            .Underline = wdUnderlineNone
