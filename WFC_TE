@@ -10,7 +10,7 @@ Sub WFC_TE()
     
     
     Set re = New RegExp
-    re.Pattern = "\{0>([\s\S]*?)<\}(?:\d+)\{>([\s\S]*?)<0\}\s*"
+    re.Pattern = "\{0>([\s\S]*?)<\}(?:\d+)\{>([\s\S]*?)<0\}\s*?"
 
     re.IgnoreCase = True
     re.Global = True
