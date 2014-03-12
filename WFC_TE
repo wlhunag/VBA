@@ -52,6 +52,7 @@ End:=ActiveDocument.Paragraphs(i).Range.End).Select
         Selection.TypeParagraph
         i = i + 1
         Selection.Font.Hidden = False
+        Selection.LanguageID = wdTraditionalChinese
         Selection.TypeText (trans)
         
       End If
