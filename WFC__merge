@@ -1,0 +1,82 @@
+Sub WFC__merge()
+    Dim re As RegExp
+    Dim para As Paragraph
+    Dim rng As Range
+    Dim txt As String
+    Dim allmatches As MatchCollection, m As match
+    Dim ori As String
+    Dim trans As String
+    Dim i As Integer
+    
+    
+    Set re = New RegExp
+    re.Pattern = "\{0>([\s\S]*?)<\}(?:\d+)\{>([\s\S]*?)<0\}\s*"
+    
+    Application.ScreenUpdating = False
+    
+    re.IgnoreCase = True
+    re.Global = True
+    i = 0
+    For Each para In ActiveDocument.Paragraphs
+      i = i + 1
+      txt = para.Range.Text
+      ori = None
+      trans = None
+      
+      'any match?
+      If re.Test(txt) Then
+        'get all matches
+        Set allmatches = re.Execute(txt)
+        For Each m In allmatches
+            Debug.Print m.SubMatches(1)
+            Set rng = para.Range
+            ori = ori + m.SubMatches(0) & Space(1)
+            trans = trans + m.SubMatches(1)
+            
+            Next m
+        ActiveDocument.Range(Start:=ActiveDocument.Paragraphs(i).Range.Start, _
+End:=ActiveDocument.Paragraphs(i).Range.End).Select
+        With Selection.Font
+           .NameAscii = "BabyBabel"
+           .NameOther = "BabyBabel"
+                      
+           .Size = 12
+           .Underline = wdUnderlineNone
+           .UnderlineColor = wdColorAutomatic
+           .Hidden = False
+           .Subscript = False
+           .Color = wdColorAutomatic
+        End With
+        
+        
+        With Selection
+           .LanguageID = wdTraditionalChinese
+           .TypeText Text:=trans
+           .Style = ActiveDocument.Styles("tw4winMark")
+           .TypeText Text:="<0}"
+        End With
+        
+        para.Range.Characters(1).Select
+        Selection.Collapse wdCollapseStart
+        
+        
+        With Selection
+           .Font.Hidden = True
+           .TypeText Text:=ori
+           .Style = ActiveDocument.Styles("tw4winMark")
+           .TypeText Text:="<}0{>"
+        End With
+        para.Range.Characters(1).Select
+        Selection.Collapse wdCollapseStart
+        Selection.Style = ActiveDocument.Styles("tw4winMark")
+        Selection.TypeText Text:="{0>"
+        
+        
+        
+      End If
+     
+    Next para
+Application.ScreenUpdating = True
+ActiveDocument.ActiveWindow.View.Type = wdPrintView
+Selection.HomeKey Unit:=wdStory
+End Sub
