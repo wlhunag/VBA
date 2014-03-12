@@ -1,0 +1,61 @@
+Sub WFC_TE()
+    Dim re As RegExp
+    Dim para As Paragraph
+    Dim rng As Range
+    Dim txt As String
+    Dim allmatches As MatchCollection, m As match
+    Dim ori As String
+    Dim trans As String
+    Dim i As Integer
+    
+    
+    Set re = New RegExp
+    re.Pattern = "\{0>([\s\S]*?)<\}(?:\d+)\{>([\s\S]*?)<0\}\s+"
+
+    re.IgnoreCase = True
+    re.Global = True
+    i = 0
+    For Each para In ActiveDocument.Paragraphs
+      i = i + 1
+      txt = para.Range.Text
+      ori = None
+      trans = None
+      
+      'any match?
+      If re.Test(txt) Then
+        'get all matches
+        Set allmatches = re.Execute(txt)
+        For Each m In allmatches
+            Debug.Print m.SubMatches(1)
+            Set rng = para.Range
+            ori = ori + m.SubMatches(0) & Space(1)
+            trans = trans + m.SubMatches(1)
+            
+            Next m
+        ActiveDocument.Range(Start:=ActiveDocument.Paragraphs(i).Range.Start, _
+End:=ActiveDocument.Paragraphs(i).Range.End).Select
+        With Selection.Font
+           .NameAscii = "BabyBabel"
+           .NameOther = "BabyBabel"
+           .NameFarEast = "新細明體"
+           
+           .Size = 12
+           .Underline = wdUnderlineNone
+           .UnderlineColor = wdColorAutomatic
+           .Hidden = False
+           .Subscript = False
+           .Color = wdColorAutomatic
+           
+        End With
+        
+        Selection.TypeText (ori)
+        Selection.TypeParagraph
+        i = i + 1
+        Selection.Font.Hidden = False
+        Selection.TypeText (trans)
+        
+      End If
+     
+    Next para
+
+End Sub
