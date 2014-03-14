@@ -62,7 +62,7 @@ End:=ActiveDocument.Paragraphs(i).Range.End).Select
         
         With Selection
            .Font.Hidden = True
-           .TypeText Text:=ori
+           .TypeText Text:= Left(ori, Len(ori) - 1)
            .Style = ActiveDocument.Styles("tw4winMark")
            .TypeText Text:="<}0{>"
         End With
