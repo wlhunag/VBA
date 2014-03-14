@@ -47,7 +47,7 @@ End:=ActiveDocument.Paragraphs(i).Range.End).Select
            
         End With
         
-        Selection.TypeText (ori)
+        Selection.TypeText (Left(ori,Len(ori)-1))
         Selection.TypeParagraph
         i = i + 1
         Selection.Font.Hidden = False
