@@ -7,18 +7,25 @@ Sub WFC__merge()
     Dim ori As String
     Dim trans As String
     Dim i As Integer
+    Dim score As Integer
+    Dim wordcount As Integer
+    
+    
     
     
     Set re = New RegExp
-    re.Pattern = "\{0>([\s\S]*?)<\}(?:\d+)\{>([\s\S]*?)<0\}\s*"
+    re.Pattern = "\{0>([\s\S]*?)<\}(\d+)\{>([\s\S]*?)<0\}\s*"
     
     Application.ScreenUpdating = False
     
     re.IgnoreCase = True
     re.Global = True
     i = 0
+    
     For Each para In ActiveDocument.Paragraphs
       i = i + 1
+      score = 0
+      wordcount = 0
       txt = para.Range.Text
       ori = None
       trans = None
@@ -30,46 +37,51 @@ Sub WFC__merge()
         For Each m In allmatches
             Debug.Print m.SubMatches(1)
             Set rng = para.Range
+            score = score + Val(m.SubMatches(1)) * Len(m.SubMatches(0))
+            wordcount = wordcount + Len(m.SubMatches(0))
             ori = ori + m.SubMatches(0) & Space(1)
-            trans = trans + m.SubMatches(1)
+            trans = trans + m.SubMatches(2)
             
             Next m
-        ActiveDocument.Range(Start:=ActiveDocument.Paragraphs(i).Range.Start, _
-End:=ActiveDocument.Paragraphs(i).Range.End).Select
-        With Selection.Font
-           .NameAscii = "BabyBabel"
-           .NameOther = "BabyBabel"
-                      
-           .Size = 12
-           .Underline = wdUnderlineNone
-           .UnderlineColor = wdColorAutomatic
-           .Hidden = False
-           .Subscript = False
-           .Color = wdColorAutomatic
-        End With
-        
-        
-        With Selection
-           .LanguageID = wdTraditionalChinese
-           .TypeText Text:=trans
-           .Style = ActiveDocument.Styles("tw4winMark")
-           .TypeText Text:="<0}"
-        End With
-        
-        para.Range.Characters(1).Select
-        Selection.Collapse wdCollapseStart
-        
-        
-        With Selection
-           .Font.Hidden = True
-           .TypeText Text:= Left(ori, Len(ori) - 1)
-           .Style = ActiveDocument.Styles("tw4winMark")
-           .TypeText Text:="<}0{>"
-        End With
-        para.Range.Characters(1).Select
-        Selection.Collapse wdCollapseStart
-        Selection.Style = ActiveDocument.Styles("tw4winMark")
-        Selection.TypeText Text:="{0>"
+            If allmatches.Count <> 1 Then
+                score = score \ wordcount
+            ActiveDocument.Range(Start:=ActiveDocument.Paragraphs(i).Range.Start, _
+    End:=ActiveDocument.Paragraphs(i).Range.End).Select
+            With Selection.Font
+               .NameAscii = "BabyBabel"
+               .NameOther = "BabyBabel"
+                          
+               .Size = 12
+               .Underline = wdUnderlineNone
+               .UnderlineColor = wdColorAutomatic
+               .Hidden = False
+               .Subscript = False
+               .Color = wdColorAutomatic
+            End With
+            
+            
+            With Selection
+               .LanguageID = wdTraditionalChinese
+               .TypeText Text:=trans
+               .Style = ActiveDocument.Styles("tw4winMark")
+               .TypeText Text:="<0}"
+            End With
+            
+            para.Range.Characters(1).Select
+            Selection.Collapse wdCollapseStart
+            
+            
+            With Selection
+               .Font.Hidden = True
+               .TypeText Text:=Left(ori, Len(ori) - 1)
+               .Style = ActiveDocument.Styles("tw4winMark")
+               .TypeText Text:="<}" & score & "{>"
+            End With
+            para.Range.Characters(1).Select
+            Selection.Collapse wdCollapseStart
+            Selection.Style = ActiveDocument.Styles("tw4winMark")
+            Selection.TypeText Text:="{0>"
+        End If
         
         
         
