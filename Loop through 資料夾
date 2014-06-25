@@ -1,0 +1,33 @@
+
+Sub AManipulateFile()
+'loop through all files in a folder
+Dim fs As Object
+Dim oFolder As Object
+Dim tFolder As Object
+Dim oFile As Object
+Dim strDocName As String
+Dim locFolder As String
+
+On Error Resume Next
+locFolder = InputBox("Enter the folder path", "File manipulation", "G:\myDocs")
+ 
+Application.ScreenUpdating = False
+Set fs = CreateObject("Scripting.FileSystemObject")
+Set oFolder = fs.GetFolder(locFolder)
+Set tFolder = fs.CreateFolder(locFolder & "\Converted")
+Set tFolder = fs.GetFolder(locFolder & "\Converted")
+For Each oFile In oFolder.Files
+'一一打開資料夾下每一個檔案
+Dim d As Document
+Set d = Application.Documents.Open(oFile.Path)
+strDocName = ActiveDocument.Name
+'call 一個函數
+addSpace
+
+ChangeFileOpenDirectory tFolder
+ActiveDocument.SaveAs FileName:=strDocName
+d.Close
+ChangeFileOpenDirectory oFolder
+Next oFile
+Application.ScreenUpdating = True
+End Sub
